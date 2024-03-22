@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Pobór mocy pompy</title>
+		<!-- <link rel="icon" type="image/png" href="img/favicon-32x32.png">
+
+		<link href="style/style.css" rel="stylesheet" type="text/css">
+		 -->
+		<script src="plotly-2.16.1.min.js"></script>
+		<script src="paho-mqtt.js"></script>
+		<script src="skrypty_index.js" defer></script>
+		
+
+	</head>
+	<body>
+		<table style="width:100%">
+			<tr>
+				<td style="padding:10px;background-color:bisque;text-align: center;width: 25%;">
+					<a href="index.html" style="text-decoration:none">Pompa ciepła</a>
+				</td>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;"> 
+					<a href="moc.html" style="text-decoration:none">Moc</a>
+				</td>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;">
+					<a href="temperatury.html" style="text-decoration:none">Temperatury</a>
+				</td>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;"> 
+					<a href="pomiary.html" style="text-decoration:none">Wyniki pomiarow</a>
+				</td>
+				
+
+			</tr>
+		</table>
+		<div id="div_moc_chwilowa">
+			<table style="width:100%">
+				<tr>
+                  <td style="width:50%">
+                    <table>
+                      <tr>
+						<th style="background-color:bisque;width:50%">Moc chwilowa:</th>
+                      </tr>
+                      <tr>
+                        <td name="pole" id="power_field" style="background-color:beige">0.00 kW</td>
+                      </tr>
+                      <tr>
+						<td>
+							<div id="plot" style="width:600px;height:250px;"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  
+                  <td  style="vertical-align:top">
+                    <table style="width:100%;">
+                      <tr>
+						<th style="background-color:bisque;width:50%;" colspan=2>Odczyt z czujników</th>
+					  </tr>
+                      <tr>
+                         <td>Temperatura wody w bojlerze</td>
+                         <td name="pole2" id="temp_water_field" style="background-color:beige">0.0 °C</td>
+                      </tr>
+                      <tr>
+                         <td>Temperatura na zewnątrz</td>
+                         <td name="pole3" id="temp_outside_field" style="background-color:beige">0.0 °C</td>
+                       </tr>
+                      <tr>
+                         <td>Ciśnienie atmosferyczne</td>
+                         <td name="pole4" id="pressure_outside_field" style="background-color:beige">0.0 °C</td>
+                       </tr>
+                      </table>
+                  </td>     
+				</tr>
+				
+			</table>
+
+			
+			
+		</div>
+
+		<div id="div_wykresy">
+			<p style="background-color:bisque;">Wykresy</p>
+			<table style="width: 10%;">
+				<tr>
+					<th style="background-color:beige">Od:</th>
+					<th style="background-color:beige">Do:</th>
+				</tr>
+				<tr>
+					<td>
+						<input type="date" id="date_from" min="2022-10-13" onchange="date_from_changed()">
+					</td>
+					<td>
+						<input type="date" id="date_to" min="2022-10-13" onchange="date_to_changed()">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button" id="date_button" value="Generuj" onmouseup="generate_plots()">
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div>
+			<table style="width:100%">
+				<tr>
+					<td style="width:fit-content">
+			
+						<p>
+							<div id="plot_bar" style="width:800px;height:600px;"></div>
+						</p>
+						<p>
+							<div id="plot_pie" style="width:800px;height:600px;"></div>
+						</p>
+						
+					</td>
+
+					<td id="data_table_place" style="vertical-align:top;text-align: left;">
+						
+					</td>
+				</tr>
+			</table>
+				
+			<p>
+				<img id="img3">
+			</p>
+					
+
+		</div>
+
+		<!-- <img src="img.jpg"> -->
+    </body>
+</html>

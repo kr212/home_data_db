@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Temperatury</title>
+		<!-- <link rel="icon" type="image/png" href="img/favicon-32x32.png">
+
+		<link href="style/style.css" rel="stylesheet" type="text/css">
+		 -->
+		<script src="skrypty.js" defer></script>
+		
+
+	</head>
+	<body>
+		<table style="width:100%">
+			<tr>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;">
+					<a href="index.html" style="text-decoration:none">Pompa ciepła</a>
+				</td>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;"> 
+					<a href="moc.html" style="text-decoration:none">Moc</a>
+				</td>
+				<td style="padding:10px;background-color:bisque;text-align: center;width: 25%;">
+					<a href="temperatury.html" style="text-decoration:none">Temperatury</a>
+				</td>
+				<td style="padding:10px;background-color:beige;text-align: center;width: 25%;"> 
+					<a href="pomiary.html" style="text-decoration:none">Wyniki pomiarow</a>
+				</td>
+
+			</tr>
+		</table>
+		<div id="div_moc_chwilowa">
+			<p style="background-color:bisque;">Moc chwilowa:</p>
+			<p name="pole" id="power_field" style="background-color:beige;width: 20%;">0.00 kW</p>
+		</div>
+
+		<div id="div_wykresy">
+			<p style="background-color:bisque;">Wykresy</p>
+			<p>Od - do</p>
+			<input type="date" id="date_from" min="2022-10-13" onchange="date_from_changed()">
+			<input type="date" id="date_to" min="2022-10-13" onchange="date_to_changed()">
+		</div>
+		<div>
+			<img id="img1">
+			<img id="img2">
+			<img id="img3">
+		</div>
+
+		<!-- <img src="img.jpg"> -->
+    </body>
+</html>

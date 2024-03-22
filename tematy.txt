@@ -1,0 +1,56 @@
+---------------------
+Storage
+---------------------
+->
+storage/status
+<-
+storage/control:
+	{'command':'exit'} - wyjście
+	{'command':'get_data','type':'day_consumption','date_from':date_from_field.value,'date_to':date_to_field.value,'answer_to':'uuid z web'
+	{'command':'get_data','type':'day_cost','date_from':date_from_field.value,'date_to':date_to_field.value,'answer_to':uuid z web))
+    {'command':'get_data','type':'time_record','variable':nazwa_wartości,'date_time_from':date_from_field.value,'date_time_to':date_to_field.value,'answer_to':uuid z web))
+->
+storage/data/web/uuid
+	{'data_type':'day_consumption','data':{'string_day':{'T1':float.ff,'T2':float.ff,'T3':float.ff,'T_min':float,'T_av':float,'T_max':float},'string_day':...}
+    {'data_type':'day_cost','data':{'string_day':{'T1':float.ff,'T2':float.ff,'T3':float.ff,'sum':float.ff,'sumG11':float.ff},'string_day':...}
+    {'data_type':'time_record','data':{'variable':nazwa_wartości,'data':{time:value...,time:value}}}
+----------------------
+mcp
+----------------------
+->
+mcp/status
+mcp/data/temp_water
+mcp/data/temp_outside
+mcp/data/pressure
+mcp/data/temp_inside
+mcp/data/humidity_inside
+	wszystkie: {'time':string time, 'value':int}
+	
+<-
+mcp/control
+	{'command':'exit'} - wyjście
+
+------------------------	
+meter
+------------------------
+->
+meter/status
+meter/data/power_mom",
+meter/data/power
+meter/data/power_T1
+meter/data/power_T2
+meter/data/power_T3
+	wszystkie: {'time':string time, 'value':int}
+
+<-
+meter/control
+	{'command':'exit'} - wyjście
+	
+------------------------
+logger db
+------------------------
+->
+logger/status
+<-
+logger/control
+	{'command':'exit'} - wyjście

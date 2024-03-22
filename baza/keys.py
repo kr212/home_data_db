@@ -1,0 +1,1 @@
+keys=["time","power","sum","T1","T2","T3","temp_water","temp_outside","pressure"]
