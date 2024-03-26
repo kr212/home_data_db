@@ -28,98 +28,98 @@ class MeterCRCException(Exception):
 
 class Meter():
     registers={
-        'Serial number':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x00,'length':4,'type':'int','unit':''},
-        'Meter ID':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x02,'length':2,'type':'int','unit':'','fc_write':0x06},
-        'Baud Rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x03,'length':2,'type':'int','unit':'bps','fc_write':0x06},
-        'Software Version':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x04,'length':4,'type':'float','unit':''},
-        'Hardware Version':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x06,'length':4,'type':'float','unit':''},
-        'CT Rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x08,'length':2,'type':'int','unit':''},
-        'S0 output rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x09,'length':4,'type':'float','unit':'imp/kWh'},
-        'Combined Code':{'reg_l':0x0B,'reg_h':0x00,'length':2,'type':'int','fc_read':0x03,'unit':'','fc_write':0x06},
+        'Serial number':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x00,'length':4,'type':'int','unit':'','param_type':'service'},
+        'Meter ID':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x02,'length':2,'type':'int','unit':'','fc_write':0x06,'param_type':'service'},
+        'Baud Rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x03,'length':2,'type':'int','unit':'bps','fc_write':0x06,'param_type':'service'},
+        'Software Version':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x04,'length':4,'type':'float','unit':'','param_type':'service'},
+        'Hardware Version':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x06,'length':4,'type':'float','unit':'','param_type':'service'},
+        'CT Rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x08,'length':2,'type':'int','unit':'','param_type':'service'},
+        'S0 output rate':{'fc_read':0x03,'reg_h':0x00,'reg_l':0x09,'length':4,'type':'float','unit':'imp/kWh','param_type':'service'},
+        'Combined Code':{'reg_l':0x0B,'reg_h':0x00,'length':2,'type':'int','fc_read':0x03,'unit':'','fc_write':0x06,'param_type':'service'},
         #'HOLIDAY-WEEKEND T':{'reg_l':0x0C,'reg_h':0x00,'length':2,'type':'int','fc_read':0x03,'unit':''},
-        'Cycle time':{'reg_l':0x0D,'reg_h':0x00,'length':2,'type':'int','fc_read':0x03,'unit':'s','fc_write':0x06},
-        'L1 Voltage':{'reg_l':0x0E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V'},
-        'L2 Voltage':{'reg_l':0x10,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V'},
-        'L3 Voltage':{'reg_l':0x12,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V'},
-        'Grid frequency':{'reg_l':0x14,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'Hz'},
-        'L1 Current':{'reg_l':0x16,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A'},
-        'L2 Current':{'reg_l':0x18,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A'},
-        'L3 Current':{'reg_l':0x1A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A'},
-        'Total Active Power':{'reg_l':0x1C,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW'},
-        'L1 Active Power':{'reg_l':0x1E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW'},
-        'L2 Active Power':{'reg_l':0x20,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW'},
-        'L3 Active Power':{'reg_l':0x22,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW'},
-        'Total Reactive Power':{'reg_l':0x24,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar'},
-        'L1 Reactive Power':{'reg_l':0x26,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar'},
-        'L2 Reactive Power':{'reg_l':0x28,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar'},
-        'L3 Reactive Power':{'reg_l':0x2A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar'},
-        'Total Apparent Power':{'reg_l':0x2C,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA'},
-        'L1 Apparent Power':{'reg_l':0x2E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA'},
-        'L2 Apparent Power':{'reg_l':0x30,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA'},
-        'L3 Apparent Power':{'reg_l':0x32,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA'},
-        'Total Power Factor':{'reg_l':0x34,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':''},
-        'L1 Power Factor':{'reg_l':0x36,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':''},
-        'L2 Power Factor':{'reg_l':0x38,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':''},
-        'L3 Power Factor':{'reg_l':0x3A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':''},
-        'Total Active Energy':{'reg_l':0x00,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L1 Total Active Energy':{'reg_l':0x02,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L2 Total Active Energy':{'reg_l':0x04,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L3 Total Active Energy':{'reg_l':0x06,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'Forward Active Energy':{'reg_l':0x08,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L1 Forward Active Energy':{'reg_l':0x0A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L2 Forward Active Energy':{'reg_l':0x0C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L3 Forward Active Energy':{'reg_l':0x0E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'Reverse Active Energy':{'reg_l':0x10,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L1 Reverse Active Energy':{'reg_l':0x12,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L2 Reverse Active Energy':{'reg_l':0x14,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'L3 Reverse Active Energy':{'reg_l':0x16,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'Total Reactive Energy':{'reg_l':0x18,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L1 Reactive Energy':{'reg_l':0x1A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L2 Reactive Energy':{'reg_l':0x1C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L3 Reactive Energy':{'reg_l':0x1E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'Forward Reactive Energy':{'reg_l':0x20,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L1 Forward Reactive Energy':{'reg_l':0x22,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L2 Forward Reactive Energy':{'reg_l':0x24,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L3 Forward Reactive Energy':{'reg_l':0x26,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'Reverse Reactive Energy':{'reg_l':0x28,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L1 Reverse Reactive Energy':{'reg_l':0x2A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L2 Reverse Reactive Energy':{'reg_l':0x2C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'L3 Reverse Reactive Energy':{'reg_l':0x2E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T1 Total Active Energy':{'reg_l':0x30,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T1 Forward Active Energy':{'reg_l':0x32,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T1 Reverse Active Energy':{'reg_l':0x34,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T1 Total Reactive Energy':{'reg_l':0x36,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T1 Forward Reactive Energy':{'reg_l':0x38,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T1 Reverse Reactive Energy':{'reg_l':0x3A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T2 Total Active Energy':{'reg_l':0x3C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T2 Forward Active Energy':{'reg_l':0x3E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T2 Reverse Active Energy':{'reg_l':0x40,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T2 Total Reactive Energy':{'reg_l':0x42,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T2 Forward Reactive Energy':{'reg_l':0x44,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T2 Reverse Reactive Energy':{'reg_l':0x46,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T3 Total Active Energy':{'reg_l':0x48,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T3 Forward Active Energy':{'reg_l':0x4A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T3 Reverse Active Energy':{'reg_l':0x4C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T3 Total Reactive Energy':{'reg_l':0x4E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T3 Forward Reactive Energy':{'reg_l':0x50,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T3 Reverse Reactive Energy':{'reg_l':0x52,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T4 Total Active Energy':{'reg_l':0x54,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T4 Forward Active Energy':{'reg_l':0x56,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T4 Reverse Active Energy':{'reg_l':0x58,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh'},
-        'T4 Total Reactive Energy':{'reg_l':0x5A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T4 Forward Reactive Energy':{'reg_l':0x5C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'T4 Reverse Reactive Energy':{'reg_l':0x5E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh'},
-        'Time':{'reg_l':0x3C,'reg_h':0x00,'length':8,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 1':{'reg_l':0x00,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 2':{'reg_l':0x0C,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 3':{'reg_l':0x18,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 4':{'reg_l':0x24,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 5':{'reg_l':0x30,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 6':{'reg_l':0x3C,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 7':{'reg_l':0x48,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Interval 8':{'reg_l':0x54,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Time Zone':{'reg_l':0x60,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':''},
-        'Holiday Weekend T':{'reg_l':0x0C,'reg_h':0x00,'length':2,'fc_read':0x03,'fc_write':0x06,'type':'data','unit':''}
+        'Cycle time':{'reg_l':0x0D,'reg_h':0x00,'length':2,'type':'int','fc_read':0x03,'unit':'s','fc_write':0x06,'param_type':'service'},
+        'L1 Voltage':{'reg_l':0x0E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V','param_type':'work'},
+        'L2 Voltage':{'reg_l':0x10,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V','param_type':'work'},
+        'L3 Voltage':{'reg_l':0x12,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'V','param_type':'work'},
+        'Grid frequency':{'reg_l':0x14,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'Hz','param_type':'work'},
+        'L1 Current':{'reg_l':0x16,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A','param_type':'work'},
+        'L2 Current':{'reg_l':0x18,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A','param_type':'work'},
+        'L3 Current':{'reg_l':0x1A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'A','param_type':'work'},
+        'Total Active Power':{'reg_l':0x1C,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW','param_type':'work'},
+        'L1 Active Power':{'reg_l':0x1E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW','param_type':'work'},
+        'L2 Active Power':{'reg_l':0x20,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW','param_type':'work'},
+        'L3 Active Power':{'reg_l':0x22,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kW','param_type':'work'},
+        'Total Reactive Power':{'reg_l':0x24,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar','param_type':'work_r'},
+        'L1 Reactive Power':{'reg_l':0x26,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar','param_type':'work_r'},
+        'L2 Reactive Power':{'reg_l':0x28,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar','param_type':'work_r'},
+        'L3 Reactive Power':{'reg_l':0x2A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVar','param_type':'work_r'},
+        'Total Apparent Power':{'reg_l':0x2C,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA','param_type':'work_ap'},
+        'L1 Apparent Power':{'reg_l':0x2E,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA','param_type':'work_ap'},
+        'L2 Apparent Power':{'reg_l':0x30,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA','param_type':'work_ap'},
+        'L3 Apparent Power':{'reg_l':0x32,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'kVA','param_type':'work_ap'},
+        'Total Power Factor':{'reg_l':0x34,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'','param_type':'work'},
+        'L1 Power Factor':{'reg_l':0x36,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'','param_type':'work'},
+        'L2 Power Factor':{'reg_l':0x38,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'','param_type':'work'},
+        'L3 Power Factor':{'reg_l':0x3A,'reg_h':0x00,'length':4,'type':'float','fc_read':0x03,'unit':'','param_type':'work'},
+        'Total Active Energy':{'reg_l':0x00,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'L1 Total Active Energy':{'reg_l':0x02,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'L2 Total Active Energy':{'reg_l':0x04,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'L3 Total Active Energy':{'reg_l':0x06,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'Forward Active Energy':{'reg_l':0x08,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'L1 Forward Active Energy':{'reg_l':0x0A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'L2 Forward Active Energy':{'reg_l':0x0C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'L3 Forward Active Energy':{'reg_l':0x0E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'Reverse Active Energy':{'reg_l':0x10,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'L1 Reverse Active Energy':{'reg_l':0x12,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'L2 Reverse Active Energy':{'reg_l':0x14,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'L3 Reverse Active Energy':{'reg_l':0x16,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'Total Reactive Energy':{'reg_l':0x18,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'L1 Reactive Energy':{'reg_l':0x1A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'L2 Reactive Energy':{'reg_l':0x1C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'L3 Reactive Energy':{'reg_l':0x1E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'Forward Reactive Energy':{'reg_l':0x20,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'L1 Forward Reactive Energy':{'reg_l':0x22,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'L2 Forward Reactive Energy':{'reg_l':0x24,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'L3 Forward Reactive Energy':{'reg_l':0x26,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'Reverse Reactive Energy':{'reg_l':0x28,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'L1 Reverse Reactive Energy':{'reg_l':0x2A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'L2 Reverse Reactive Energy':{'reg_l':0x2C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'L3 Reverse Reactive Energy':{'reg_l':0x2E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'T1 Total Active Energy':{'reg_l':0x30,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'T1 Forward Active Energy':{'reg_l':0x32,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'T1 Reverse Active Energy':{'reg_l':0x34,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'T1 Total Reactive Energy':{'reg_l':0x36,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'T1 Forward Reactive Energy':{'reg_l':0x38,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'T1 Reverse Reactive Energy':{'reg_l':0x3A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'T2 Total Active Energy':{'reg_l':0x3C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'T2 Forward Active Energy':{'reg_l':0x3E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'T2 Reverse Active Energy':{'reg_l':0x40,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'T2 Total Reactive Energy':{'reg_l':0x42,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'T2 Forward Reactive Energy':{'reg_l':0x44,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'T2 Reverse Reactive Energy':{'reg_l':0x46,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'T3 Total Active Energy':{'reg_l':0x48,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work'},
+        'T3 Forward Active Energy':{'reg_l':0x4A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'T3 Reverse Active Energy':{'reg_l':0x4C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'T3 Total Reactive Energy':{'reg_l':0x4E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'T3 Forward Reactive Energy':{'reg_l':0x50,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'T3 Reverse Reactive Energy':{'reg_l':0x52,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'T4 Total Active Energy':{'reg_l':0x54,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_no'},
+        'T4 Forward Active Energy':{'reg_l':0x56,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_for'},
+        'T4 Reverse Active Energy':{'reg_l':0x58,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kWh','param_type':'work_rev'},
+        'T4 Total Reactive Energy':{'reg_l':0x5A,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_r'},
+        'T4 Forward Reactive Energy':{'reg_l':0x5C,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_for_r'},
+        'T4 Reverse Reactive Energy':{'reg_l':0x5E,'reg_h':0x01,'length':4,'type':'float','fc_read':0x03,'unit':'kVarh','param_type':'work_rev_r'},
+        'Time':{'reg_l':0x3C,'reg_h':0x00,'length':8,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 1':{'reg_l':0x00,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 2':{'reg_l':0x0C,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 3':{'reg_l':0x18,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 4':{'reg_l':0x24,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 5':{'reg_l':0x30,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 6':{'reg_l':0x3C,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 7':{'reg_l':0x48,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Interval 8':{'reg_l':0x54,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Time Zone':{'reg_l':0x60,'reg_h':0x03,'length':24,'fc_read':0x03,'fc_write':0x10,'type':'data','unit':'','param_type':'special'},
+        'Holiday Weekend T':{'reg_l':0x0C,'reg_h':0x00,'length':2,'fc_read':0x03,'fc_write':0x06,'type':'data','unit':'','param_type':'special'}
 
     }
     
@@ -155,8 +155,8 @@ class Meter():
         #add ccr at the end of frame
         send.append(crc_c[0])
         send.append(crc_c[1])
-        print('To send:')
-        print(send)
+        #print('To send:')
+        #print(send)
         return serial.to_bytes(send)
 
     def _check_error(self,bytes,proper_answer):
@@ -214,8 +214,8 @@ class Meter():
         read2=self.port.read(packet_length) 
         read=read+read2
 
-        print('Received:')
-        print(read)
+        #print('Received:')
+        #print(read)
     
         #add crc check of received data!!!!!!!!!!!!!!!!!!!! read+read2=full packet
         self._CRC_check(read)
@@ -268,7 +268,7 @@ class Meter():
         
         data=self._send_receive_read(Meter.registers['Time'])
         
-        return datetime.datetime(self._BCD_to_int(data[6]),self._BCD_to_int(data[5]),self._BCD_to_int(data[4]),self._BCD_to_int(data[2]),self._BCD_to_int(data[1]),self._BCD_to_int(data[0]))
+        return datetime.datetime(self._BCD_to_int(data[6])+2000,self._BCD_to_int(data[5]),self._BCD_to_int(data[4]),self._BCD_to_int(data[2]),self._BCD_to_int(data[1]),self._BCD_to_int(data[0]))
 
     def set_time(self,date_time='now'):
         """sets date and time in the Meter
@@ -447,3 +447,25 @@ class Meter():
             return False
         
         return self._send_receive_write(Meter.registers['Cycle time'],[0x00,time])
+
+    def get_reg_names(self,type):
+        """return a list with register names """
+        
+        all=[]
+
+        for li in Meter.registers.keys():
+            if Meter.registers[li]['param_type']==type:
+                all.append(li)
+        return all
+    
+    def sync_time(self,diff=60):
+        """synchronize time in meter with local time\
+            diff - min difference between internal and local time to set new time"""
+        inside=self.get_time()
+        local=datetime.datetime.now()
+
+        delta=datetime.timedelta(seconds=diff)
+
+        if abs(inside-local)>delta:
+            return self.set_time()
+        return False

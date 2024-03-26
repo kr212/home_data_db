@@ -23,6 +23,9 @@ STATUS=PREF+'status'
 CONTROL=PREF+'control'
 DATA=PREF+'data'
 
+#topics to save
+TOPICS=['meter/data/power_mom','meter/data/power','meter/data/power_T1','meter/data/power_T2','meter/data/power_T3','mcp/data/temp_water','mcp/data/temp_outside','mcp/data/pressure']
+
 INTERVAL=datetime.timedelta(minutes=1)
 
 #global variable
@@ -41,7 +44,7 @@ def on_message(client, userdata, msg):
             if (json_payload['command']=='exit'):
                 logging.info('Exit command received')
                 exit=True
-    elif ('meter/data' in msg.topic) or ('mcp/data/temp_water' == msg.topic) or ('mcp/data/temp_outside' == msg.topic) or ('mcp/data/pressure' == msg.topic):
+    elif msg.topic in TOPICS:
         client.queue.put(msg)
     
 

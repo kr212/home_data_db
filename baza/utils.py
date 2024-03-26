@@ -51,7 +51,7 @@ def color(fg=None,bg=None):
     return command+end
 
 def _count_easter(year):
-    """counts date of easter in year
+    """counts date of easter in year and returns the next day (Easter is always in Sunday, which is properly interpreted by Orno meter)
     Meeus/Jones/Butcher method"""
 
     a = year%19
@@ -69,12 +69,14 @@ def _count_easter(year):
     p = (h+l-7*m+114)%31
     day = p+1
     month = int((h+l-7*m+114)/31)
- 
-    return datetime.date(year,month,day)
+    
+    delta=datetime.timedelta(days=1)
+    #a im interested in the next day after easter
+    return datetime.date(year,month,day)+delta
 
 def _count_bc(year):
-    """counts date of "Boże ciało" in year, 60 days after Easter"""
-    return _count_easter(year) + datetime.timedelta(days=60)
+    """counts date of "Boże ciało" in year, 60 days after Easter (59 after the next day after easter)"""
+    return _count_easter(year) + datetime.timedelta(days=59)
 
 def is_holiday(day):
 #check if date is a holiday in Poland
