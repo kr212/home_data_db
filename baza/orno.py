@@ -143,7 +143,7 @@ class Meter():
         send.append(data['reg_h'])
         send.append(data['reg_l'])
         #only in write mode and if length>2 we skip this
-        if not (rw=='w' and data['length']==2):
+        if not (rw=='w' and data['length']<=2):
             #always 0?
             send.append(0x00)
             #data length in words
@@ -199,7 +199,7 @@ class Meter():
         
         return payload
     
-    def _send_receive_write(self, register,payload_d):
+    def _send_receive_write(self, register,payload_d,skip_length_test=False):
         """perform send and receive actions including errors check, for write action only
         returns true or false
         input: register for example:{'fc_read':0x03,'reg_h':0x00,'reg_l':0x00,'length':4,'type':'int','unit':''}"""
@@ -220,7 +220,7 @@ class Meter():
         #add crc check of received data!!!!!!!!!!!!!!!!!!!! read+read2=full packet
         self._CRC_check(read)
         #check if there is enough data
-        if read[2]==register['reg_h'] and read[3]==register['reg_l'] and read[5]==int(register['length']/2):
+        if read[2]==register['reg_h'] and read[3]==register['reg_l'] and (skip_length_test or read[5]==int(register['length']/2)):
             return True
         else:
             return False
@@ -262,8 +262,8 @@ class Meter():
             return value
 
     def get_time(self):
-        """reads time and data froom meter
-        answer from meter: address, fc_read, length, s, m, h, week_day, day, month, year, ?? , CRC,CRC"""
+        """reads time and data from meter
+        answer from meter: address, fc_read, length, s, m, h, week_day, day, month, year, ?? , CRC,CRC
         
         
         data=self._send_receive_read(Meter.registers['Time'])
@@ -410,7 +410,7 @@ class Meter():
         if (ID<1) or (ID>247):
             return False
         
-        res= self._send_receive_write(Meter.registers['Meter ID'],[0x00,ID])
+        res= self._send_receive_write(Meter.registers['Meter ID'],[0x00,ID],skip_length_test=True)
 
         #change ID in object in case of proper change
         if res:
@@ -438,7 +438,7 @@ class Meter():
             return False
         
 
-        return self._send_receive_write(Meter.registers['Combined Code'],[0x00,code])
+        return self._send_receive_write(Meter.registers['Combined Code'],[0x00,code],skip_length_test=True)
     
     def set_cycle_time(self,time=5):
         """sets cycle time of Meter, how long the value is being displayed on LCD, 1s - 30s"""
@@ -446,7 +446,7 @@ class Meter():
         if (time<1) or (time>30):
             return False
         
-        return self._send_receive_write(Meter.registers['Cycle time'],[0x00,time])
+        return self._send_receive_write(Meter.registers['Cycle time'],[0x00,self._int_to_BCD(time)],skip_length_test=True)
 
     def get_reg_names(self,type):
         """return a list with register names """
