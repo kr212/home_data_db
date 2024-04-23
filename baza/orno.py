@@ -263,7 +263,7 @@ class Meter():
 
     def get_time(self):
         """reads time and data from meter
-        answer from meter: address, fc_read, length, s, m, h, week_day, day, month, year, ?? , CRC,CRC
+        answer from meter: address, fc_read, length, s, m, h, week_day, day, month, year, ?? , CRC,CRC"""
         
         
         data=self._send_receive_read(Meter.registers['Time'])
@@ -271,8 +271,7 @@ class Meter():
         return datetime.datetime(self._BCD_to_int(data[6])+2000,self._BCD_to_int(data[5]),self._BCD_to_int(data[4]),self._BCD_to_int(data[2]),self._BCD_to_int(data[1]),self._BCD_to_int(data[0]))
 
     def set_time(self,date_time='now'):
-        """sets date and time in the Meter
-        packet: id, fc_write, addr_h, addr_l, 0x00, length/2, 0x08?, s, m, h, week_day 1-7, day, month, year, 0x00,CRC,CRC"""
+        """sets date and time in the Meter packet: id, fc_write, addr_h, addr_l, 0x00, length/2, 0x08?, s, m, h, week_day 1-7, day, month, year, 0x00,CRC,CRC"""
         #check the date
         if date_time=='now':
             set=datetime.datetime.now()
@@ -459,7 +458,7 @@ class Meter():
         return all
     
     def sync_time(self,diff=60):
-        """synchronize time in meter with local time\
+        """synchronize time in meter with local time
             diff - min difference between internal and local time to set new time"""
         inside=self.get_time()
         local=datetime.datetime.now()
