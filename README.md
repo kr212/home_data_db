@@ -26,6 +26,7 @@ Main modules are:
 ## Python dependencies:
 * pyserial
 * paho mqtt
+* suntime
 
 ## Additional info
 Project is under develophent, hence there may be a lot of not used code inside each module.
