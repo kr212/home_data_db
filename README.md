@@ -2,7 +2,7 @@
 Home data aquisition with sqlite database.
 Repository contains modules that are used in my home data aquisition system to store info from ORNO OR-WE-517 energy meter and several other sensors.
 
-## Hardaware
+## Hardware
 The following devices are used in this project:
 - ORNO OR-WE-517 - energy meter with Modbus interface
 - MCP2221a USB to GPIO breakout module - to use I2C AHT and BMP sensors
