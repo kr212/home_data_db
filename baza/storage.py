@@ -58,103 +58,6 @@ def on_message(client, userdata, msg):
 
 
 
-class Storage:
-    def __init__(self,interval):
-        self.buffer={"power_mom":0.0,
-                     "power":0.0,
-                     "power_T1":0.0,
-                     "power_T2":0.0,
-                     "power_T3":0.0}
-        self.time=datetime.datetime.now()
-        self.interval=interval
-        self.previous_time=datetime.datetime.now()-self.interval
-        #if buffer is being filled
-        self.filling=False
-    
-    def _buffer_full(self):
-        #check if buffer is full and ready to save
-        for kk in self.buffer:
-            if self.buffer[kk]==0.0:
-                return False
-        return True
-    
-    def _buffer_clear(self):
-        #clear the buffer
-        for kk in self.buffer:
-            self.buffer[kk]=0.0
-        #self.time=''
-        #self.filling=False
-
-    def _file_name(self):
-    #return file name to save data
-        teraz=datetime.datetime.now()
-        return DIR+str(teraz.year)+'.'+str(teraz.month)
-
-    def _buffer_save(self):
-        #save the data to the file
-
-        #beggining of log line: the date and time
-        self.file_buf=self.time+';'
-
-        #compose the data line
-        for d in self.buffer:
-            self.file_buf+=f'{self.buffer[d]:.2f};'
-        self.file_buf+='\n'
-
-        #write data to file
-        with open(self._file_name(),'a') as file:
-            file.write(self.file_buf)
-            logging.info(f'Wrote {self.file_buf} to file')
-            
-
-    def add(self, msg):
-        #adds a message of topic to buffer
-        #remember msg topic
-        self.topic=msg.topic
-        #get value type from topic
-        self.value_type=self.topic.split('/')[2]
-        #load payload as json
-        self.payload=json.loads(msg.payload.decode('utf-8'))
-        #get the message time
-        self.msg_time=utils.str_to_date(self.payload['time'])
-
-        self.now=datetime.datetime.now()
-        #check if it is time for next buffer
-        #if (not self.filling) and (self.msg_time-self.previous_time>=self.interval):
-        #    self._buffer_clear()
-        #    self.filling=True
-        #    #time for logging
-        #    self.time=self.payload['time']
-        #    self.previous_time=self.msg_time
-
-        #if self.filling:
-       # 	#no enough data in inerval time
-        #	if (self.msg_time - self.previous_time>=self.intetrval):
-        #	    self._buffer_clear()
-        #    self.buffer[self.value_type]=self.payload['value']
-        #    logging.info(f'Added to buffor: {self.value_type} - {self.payload["value"]}')
-        #    if self._buffer_full():
-        #        #time to save
-        #        self._buffer_save()
-        #        self.filling=False
-                
-                
-        if (self.msg_time-self.previous_time>=self.interval):
-            if (self.filling):
-                logging.error("No enough data during interval")
-            self._buffer_clear()
-            self.filling=True
-            #time for logging
-            self.time=self.payload['time']
-            self.previous_time=self.msg_time
-
-        if self.filling:
-            self.buffer[self.value_type]=self.payload['value']
-            logging.info(f'Added to buffer: {self.value_type} - {self.payload["value"]}')
-            if self._buffer_full():
-                #time to save
-                self._buffer_save()
-                self.filling=False
 
 class Storage2:
     def __init__(self,interval):
@@ -177,47 +80,47 @@ class Storage2:
 
     def _file_name(self):
     #return file name to save data
-        self.teraz=datetime.datetime.now()
-        #return DIR+str(self.teraz.year)+'.'+str(self.teraz.month)
-        return DIR+str(self.teraz.year)+'.'+f'{self.teraz.month:02}'
+        now=datetime.datetime.now()
+        #return DIR+str(now.year)+'.'+str(now.month)
+        return DIR+str(now.year)+'.'+f'{now.month:02}'
     def _buffer_save(self):
         #save the data to the file
 
         #begining of log line: the date and time
-        self.file_buf=utils.now()+';'
+        file_buf=utils.now()+';'
         
-        for self.kk in self.buffer:
+        for kk in self.buffer:
             #compose the data line
-            if self.buffer[self.kk]['valid']>=self.time:
+            if self.buffer[kk]['valid']>=self.time:
                 #data is still valid
-                self.file_buf+=f'{self.buffer[self.kk]["value"]:.2f};'
+                file_buf+=f'{self.buffer[kk]["value"]:.2f};'
             else:
-                self.file_buf+=f'---;'
-        self.file_buf+='\n'
+                file_buf+=f'---;'
+        file_buf+='\n'
 
         #write data to file
-        with open(self._file_name(),'a') as self.file:
-            self.file.write(self.file_buf)
-            logging.info(f'Wrote {self.file_buf} to file')
+        with open(self._file_name(),'a') as file:
+            file.write(file_buf)
+            logging.info(f'Wrote {file_buf} to file')
             
 
     def add(self, msg):
         #adds a message of topic to buffer
         #remember msg topic
-        self.topic=msg.topic
+        topic=msg.topic
         #get value type from topic
-        self.value_type=self.topic.split('/')[-1]
+        value_type=topic.split('/')[-1]
         #load payload as json
-        self.payload=json.loads(msg.payload.decode('utf-8'))
+        payload=json.loads(msg.payload.decode('utf-8'))
         #get the message time
-        self.msg_time=utils.str_to_date(self.payload['time'])
+        msg_time=utils.str_to_date(payload['time'])
         #get the valid time
         #print('---------------',self.payload)
-        self.msg_valid=utils.str_to_date(self.payload['valid'])
+        msg_valid=utils.str_to_date(payload['valid'])
 
         #add to buffer
-        self.buffer[self.value_type]['value']=self.payload['value']
-        self.buffer[self.value_type]['valid']=self.msg_valid
+        self.buffer[value_type]['value']=payload['value']
+        self.buffer[value_type]['valid']=msg_valid
         #self.buffer[self.value_type]['new']=True
         
     def check_interval(self):
