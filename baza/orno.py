@@ -174,56 +174,81 @@ class Meter():
         if crc.crc(data[:-2])!=(data[-2],data[-1]):
             raise MeterCRCException
 
-    def _send_receive_read(self, register):
-        """perform send and receive actions including errors check, for read action only
-        returns payload: packet except first 3 and last 4 bytes
-        input: register for example:{'fc_read':0x03,'reg_h':0x00,'reg_l':0x00,'length':4,'type':'int','unit':''}"""
-        
-        message_tmp=self._message(register)
+    def _read_RTU(self,register:dict):
+        """reads data with function code 0x03 (Read holding registers)
+        register - dict"""
+        #compose packet to send
+        send=[self.id,register['fc_read'],register['reg_h'],register['reg_l'],0x00,int(register['length']/2)]
 
-        self.port.write(self._message(register))
+        #calculate crc
+        crc_c=crc.crc(send)
+        #add ccr at the end of frame
+        send.append(crc_c[0])
+        send.append(crc_c[1])
+
+        #send through RS
+        self.port.write(bytes(send))
+        
         #read first 3 bytes in case of error (won't be more in that case)
         read=self.port.read(3)
+        #print(read)
         
         self._check_error(read,register['fc_read'])
         
         packet_length=read[2]
-        read2=self.port.read(packet_length+2) #length of packet is stored in 3rd byte, +2 because there are 2 bytes od CRC
+        read2=self.port.read(packet_length+2) #length of packet is stored in 3rd byte, +2 because there are 2 bytes from CRC
         payload=read2[:-2]
     
-        #add crc check of received data!!!!!!!!!!!!!!!!!!!! read+read2=full packet
         self._CRC_check(read+read2)
         #check if there is enough data
         if len(payload)!=packet_length:
             raise MeterWrongDataLengthException
-        
         return payload
-    
-    def _send_receive_write(self, register,payload_d,skip_length_test=False):
-        """perform send and receive actions including errors check, for write action only
-        returns true or false
-        input: register for example:{'fc_read':0x03,'reg_h':0x00,'reg_l':0x00,'length':4,'type':'int','unit':''}"""
-        
-        self.port.write(self._message(register,'w',payload_d))
+
+    def _write_RTU(self,register:dict,payload):
+        """writes data with function code 0x06 and 0x10
+        register - dict"""
+        if register['fc_write']==0x06:
+            #write single register (2 bytes)
+            #compose packet to send
+            send=[self.id,register['fc_write'],register['reg_h'],register['reg_l'],payload[0],payload[1]]
+        elif register['fc_write']==0x10:
+            #write multiple registers
+            send=[self.id,register['fc_write'],register['reg_h'],register['reg_l'],0x00,int(register['length']/2),len(payload)]+payload
+                        
+        #calculate crc
+        crc_c=crc.crc(send)
+        #add ccr at the end of frame
+        send.append(crc_c[0])
+        send.append(crc_c[1])
+
+        #send through RS
+        self.port.write(bytes(send))
+
         #read first 3 bytes in case of error (won't be more in that case)
         read=self.port.read(3)
-        
         self._check_error(read,register['fc_write'])
         
-        packet_length=5  #always the same length?
+        packet_length=5  #always the same length
         read2=self.port.read(packet_length) 
         read=read+read2
 
-        #print('Received:')
-        #print(read)
-    
-        #add crc check of received data!!!!!!!!!!!!!!!!!!!! read+read2=full packet
-        self._CRC_check(read)
-        #check if there is enough data
-        if read[2]==register['reg_h'] and read[3]==register['reg_l'] and (skip_length_test or read[5]==int(register['length']/2)):
-            return True
-        else:
-            return False
+        if register['reg_h']==0x00 and register['reg_l']==0x02:
+            #set ID command has different answer
+            if read[2]==register['reg_h'] and read[3]==register['reg_l'] and read[0]==payload[1]:
+                return True
+        elif register['fc_write']==0x06:
+            #check answer for fc 0x06
+            #print(read)
+            #print(bytes(send))
+            if read==bytes(send):
+                return True
+        elif register['fc_write']==0x10:
+            #check answer for fc 0x10
+            self._CRC_check(read)
+            if read[2]==register['reg_h'] and read[3]==register['reg_l'] and read[5]==int(register['length']/2):
+                return True
+        return False
 
     def _int_to_BCD(self,number):
         tmp1=number % 10
@@ -245,7 +270,7 @@ class Meter():
         if register_name not in Meter.registers.keys():
             return None
         
-        data=self._send_receive_read(Meter.registers[register_name])
+        data=self._read_RTU(Meter.registers[register_name])
 
         if Meter.registers[register_name]['type']=='float':
             (value,)=struct.unpack('>f',data)
@@ -266,7 +291,7 @@ class Meter():
         answer from meter: address, fc_read, length, s, m, h, week_day, day, month, year, ?? , CRC,CRC"""
         
         
-        data=self._send_receive_read(Meter.registers['Time'])
+        data=self._read_RTU(Meter.registers['Time'])
         
         return datetime.datetime(self._BCD_to_int(data[6])+2000,self._BCD_to_int(data[5]),self._BCD_to_int(data[4]),self._BCD_to_int(data[2]),self._BCD_to_int(data[1]),self._BCD_to_int(data[0]))
 
@@ -278,13 +303,13 @@ class Meter():
         else:
             set=date_time
         #raw payload, not in BCD format
-        payload_send=[0x08,set.second,set.minute,set.hour,set.isoweekday(),set.day, set.month, set.year % 100, 0x00 ]
+        payload_send=[set.second,set.minute,set.hour,set.isoweekday(),set.day, set.month, set.year % 100, 0x00 ]
         
-        #convert values to BCD (0x08 and 0x00 won't be changed)
+        #convert values to BCD ( 0x00 won't be changed)
         for pp in range(len(payload_send)):
             payload_send[pp]=self._int_to_BCD(payload_send[pp])
 
-        return self._send_receive_write(Meter.registers['Time'],payload_send)
+        return self._write_RTU(Meter.registers['Time'],payload_send)
 
     def get_interval(self,number):
         """reads the 'number' interval from Meter
@@ -294,7 +319,7 @@ class Meter():
         if (number <1) or (number>8):
             return None
         
-        data=self._send_receive_read(Meter.registers[f'Time Interval {number}'])
+        data=self._read_RTU(Meter.registers[f'Time Interval {number}'])
 
         intervals=[]
         for i in range(8):
@@ -328,12 +353,9 @@ class Meter():
             #convert values to BCD 
             for pp in range(len(payload_send)):
                 payload_send[pp]=self._int_to_BCD(payload_send[pp])
-        
-        #add0x18 at the begining
-        payload_send=[0x18]+payload_send
 
-        return self._send_receive_write(Meter.registers[f'Time Interval {number}'],payload_send)
-            
+        return self._write_RTU(Meter.registers[f'Time Interval {number}'],payload_send)
+        
 
     def get_zone(self):
         """reads the zone from Meter
@@ -341,7 +363,7 @@ class Meter():
         answer should be: address, fc_read, length, (mm ,dd, interval )x8, crc,crc
         return list with 8 tuples (date,interval)"""
         
-        data=self._send_receive_read(Meter.registers['Time Zone'])
+        data=self._read_RTU(Meter.registers['Time Zone'])
 
         zone=[]
         for i in range(8):
@@ -377,10 +399,8 @@ class Meter():
             for pp in range(len(payload_send)):
                 payload_send[pp]=self._int_to_BCD(payload_send[pp])
         
-        #add0x18 at the begining
-        payload_send=[0x18]+payload_send
 
-        return self._send_receive_write(Meter.registers['Time Zone'],payload_send)
+        return self._write_RTU(Meter.registers['Time Zone'],payload_send)
 
     def get_week_hol(self):
         """reads the holiday and weekend intervals from Meter
@@ -388,7 +408,7 @@ class Meter():
         answer should be: address, fc_read, length, holiday, weekend, crc,crc
         return tuple with 2 values of intervals, for weekend and for holidays"""
         
-        data=self._send_receive_read(Meter.registers['Holiday Weekend T'])
+        data=self._read_RTU(Meter.registers['Holiday Weekend T'])
 
         return (data[0],data[1])
 
@@ -402,14 +422,14 @@ class Meter():
         else:
             return False
 
-        return self._send_receive_write(Meter.registers['Holiday Weekend T'],payload_send)
+        return self._write_RTU(Meter.registers['Holiday Weekend T'],payload_send)
     
     def set_ID(self,ID):
         """sets the modbus ID of Meter"""
         if (ID<1) or (ID>247):
             return False
         
-        res= self._send_receive_write(Meter.registers['Meter ID'],[0x00,ID],skip_length_test=True)
+        res= self._write_RTU(Meter.registers['Meter ID'],[0x00,ID])
 
         #change ID in object in case of proper change
         if res:
@@ -425,7 +445,7 @@ class Meter():
         high_b=(baud>>8) & 0b11111111
         low_b=baud & 0b11111111
 
-        return self._send_receive_write(Meter.registers['Baud Rate'],[high_b,low_b])
+        return self._write_RTU(Meter.registers['Baud Rate'],[high_b,low_b])
     
     def set_code(self,code=1):
         """sets the combined code of Meter
@@ -437,7 +457,7 @@ class Meter():
             return False
         
 
-        return self._send_receive_write(Meter.registers['Combined Code'],[0x00,code],skip_length_test=True)
+        return self._write_RTU(Meter.registers['Combined Code'],[0x00,code])
     
     def set_cycle_time(self,time=5):
         """sets cycle time of Meter, how long the value is being displayed on LCD, 1s - 30s"""
@@ -445,7 +465,7 @@ class Meter():
         if (time<1) or (time>30):
             return False
         
-        return self._send_receive_write(Meter.registers['Cycle time'],[0x00,self._int_to_BCD(time)],skip_length_test=True)
+        return self._write_RTU(Meter.registers['Cycle time'],[0x00,self._int_to_BCD(time)])
 
     def get_reg_names(self,type):
         """return a list with register names """
